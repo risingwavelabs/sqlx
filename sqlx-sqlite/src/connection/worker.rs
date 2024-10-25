@@ -142,6 +142,7 @@ impl ConnectionWorker {
                     let _guard = span.enter();
                     match cmd {
                         Command::Prepare { query, tx } => {
+                            // TODO(kwannoel): Make this async?
                             tx.send(prepare(&mut conn, &query).map(|prepared| {
                                 update_cached_statements_size(
                                     &conn,
@@ -152,6 +153,7 @@ impl ConnectionWorker {
                             .ok();
                         }
                         Command::Describe { query, tx } => {
+                            // TODO(kwannoel): Make this async?
                             tx.send(describe(&mut conn, &query)).ok();
                         }
                         Command::Execute {
@@ -165,7 +167,7 @@ impl ConnectionWorker {
                             {
                                 Ok(iter) => iter,
                                 Err(e) => {
-                                    tx.send(Err(e)).ok();
+                                    tx.send_async(Err(e)).await.ok();
                                     continue;
                                 }
                             };
@@ -174,7 +176,7 @@ impl ConnectionWorker {
                                 None => {
                                     for res in iter {
                                         let has_error = res.is_err();
-                                        if tx.send(res).is_err() || has_error {
+                                        if tx.send_async(res).await.is_err() || has_error {
                                             break;
                                         }
                                     }
@@ -189,13 +191,13 @@ impl ConnectionWorker {
                                                 rows_returned += 1;
                                                 if rows_returned >= limit {
                                                     drop(iter);
-                                                    let _ = tx.send(res);
+                                                    let _ = tx.send_async(res).await;
                                                     break;
                                                 }
                                             }
                                         }
                                         let has_error = res.is_err();
-                                        if tx.send(res).is_err() || has_error {
+                                        if tx.send_async(res).await.is_err() || has_error {
                                             break;
                                         }
                                     }
