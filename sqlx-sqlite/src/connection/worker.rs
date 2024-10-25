@@ -2,7 +2,6 @@ use std::borrow::Cow;
 use std::future::Future;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
-use std::thread;
 
 use futures_channel::oneshot;
 use futures_intrusive::sync::{Mutex, MutexGuard};
@@ -103,9 +102,7 @@ impl ConnectionWorker {
     pub(crate) async fn establish(params: EstablishParams) -> Result<Self, Error> {
         let (establish_tx, establish_rx) = oneshot::channel();
 
-        thread::Builder::new()
-            .name(params.thread_name.clone())
-            .spawn(move || {
+            tokio::spawn(async {
                 let (command_tx, command_rx) = flume::bounded(params.command_channel_size);
 
                 let conn = match params.establish() {
