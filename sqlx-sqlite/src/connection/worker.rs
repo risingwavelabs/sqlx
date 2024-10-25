@@ -115,7 +115,7 @@ impl ConnectionWorker {
                 // would rollback an already completed transaction.
                 let mut ignore_next_start_rollback = false;
 
-                for (cmd, span) in command_rx {
+                while let Ok((cmd, span)) = command_rx.recv_async().await {
                     let _guard = span.enter();
                     match cmd {
                         Command::Prepare { query, tx } => {
