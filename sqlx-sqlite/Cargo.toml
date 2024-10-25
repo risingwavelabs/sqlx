@@ -32,7 +32,6 @@ unbundled = ["libsqlite3-sys/buildtime_bindgen"]
 futures-core = { version = "0.3.19", default-features = false }
 futures-channel = { version = "0.3.19", default-features = false, features = ["sink", "alloc", "std"] }
 # used by the SQLite worker thread to block on the async mutex that locks the database handle
-futures-executor = { version = "0.3.19" }
 futures-intrusive = "0.5.0"
 futures-util = { version = "0.3.19", default-features = false, features = ["alloc", "sink"] }
 
@@ -54,6 +53,8 @@ thiserror = "2.0.0"
 
 serde = { version = "1.0.145", features = ["derive"], optional = true }
 regex = { version = "1.5.5", optional = true }
+tokio = { workspace = true }
+async-channel = "2.2.0"
 
 [dependencies.libsqlite3-sys]
 version = "0.30.1"
