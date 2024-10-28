@@ -44,7 +44,6 @@ serde = { version = "1.0.145", features = ["derive"], optional = true }
 regex = { version = "1.5.5", optional = true }
 urlencoding = "2.1.3"
 tokio = { workspace = true }
-async-channel = "2.2.0"
 
 [dependencies.libsqlite3-sys]
 version = "0.27.0"
