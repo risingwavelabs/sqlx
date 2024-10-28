@@ -3703,7 +3703,6 @@ dependencies = [
 name = "sqlx-sqlite"
 version = "0.7.4"
 dependencies = [
- "async-channel 2.2.0",
  "atoi",
  "chrono",
  "flume",
