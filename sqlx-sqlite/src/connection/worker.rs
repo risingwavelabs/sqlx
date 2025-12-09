@@ -214,7 +214,7 @@ impl ConnectionWorker {
                                 // we're already in a transaction (we need to
                                 // issue a `SAVEPOINT` instead)
                                 Some(_) if depth > 0 => {
-                                    if tx.blocking_send(Err(Error::InvalidSavePointStatement)).is_err() {
+                                    if tx.send(Err(Error::InvalidSavePointStatement)).await.is_err() {
                                         break;
                                     }
                                     continue;
